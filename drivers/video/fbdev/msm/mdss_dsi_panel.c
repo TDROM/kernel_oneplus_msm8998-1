@@ -27,11 +27,25 @@
 #include "mdss_dba_utils.h"
 #include "mdss_debug.h"
 #include "mdss_livedisplay.h"
+#endif
+
+#include <linux/clk.h>
+#include "mdss_dsi_iris2p_lightup.h"
+#include <linux/project_info.h>
+
+#include <linux/display_state.h>
 
 #define DT_CMD_HDR 6
 #define DEFAULT_MDP_TRANSFER_TIME 14000
 
 #define VSYNC_DELAY msecs_to_jiffies(17)
+
+bool display_on = true;
+
+bool is_display_on()
+{
+	return display_on;
+}
 
 DEFINE_LED_TRIGGER(bl_led_trigger);
 
@@ -957,7 +971,8 @@ static int mdss_dsi_panel_on(struct mdss_panel_data *pdata)
 		pr_err("%s: Invalid input data\n", __func__);
 		return -EINVAL;
 	}
-
+    pr_err("%s start\n", __func__);
+	display_on = true;
 	pinfo = &pdata->panel_info;
 	ctrl = container_of(pdata, struct mdss_dsi_ctrl_pdata,
 				panel_data);
@@ -1061,6 +1076,8 @@ static int mdss_dsi_panel_off(struct mdss_panel_data *pdata)
 
 	if (ctrl->off_cmds.cmd_cnt)
 		mdss_dsi_panel_cmds_send(ctrl, &ctrl->off_cmds, CMD_REQ_COMMIT);
+
+	display_on = false;
 
 	if (ctrl->ds_registered && pinfo->is_pluggable) {
 		mdss_dba_utils_video_off(pinfo->dba_data);
