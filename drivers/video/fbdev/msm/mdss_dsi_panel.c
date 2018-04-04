@@ -27,10 +27,8 @@
 #include "mdss_dba_utils.h"
 #include "mdss_debug.h"
 #include "mdss_livedisplay.h"
-#endif
 
 #include <linux/clk.h>
-#include "mdss_dsi_iris2p_lightup.h"
 #include <linux/project_info.h>
 
 #include <linux/display_state.h>
